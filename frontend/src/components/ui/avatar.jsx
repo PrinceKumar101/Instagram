@@ -30,7 +30,7 @@ const Home_Avatar = React.forwardRef(({ className, ...props }, ref) => (
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex h-28 w-28 shrink-0 overflow-hidden rounded-full",
+      " relative h-16 w-16 flex shrink-0 overflow-hidden rounded-full ring-4 ring-green-500 shadow-md shadow-green-600",
       className
     )}
     {...props}
@@ -42,7 +42,7 @@ Home_Avatar.displayName = AvatarPrimitive.Root.displayName;
 const AvatarImage = React.forwardRef(({ className, ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}
-    className={cn("aspect-square h-full w-full bg-cover", className)}
+    className={cn("aspect-square h-full w-full bg-cover ", className)}
     {...props}
   />
 ));
