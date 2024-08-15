@@ -9,6 +9,7 @@ const Signup = () => {
   const { register, handleSubmit } = useForm();
 
   const [data, setdata] = useState(null);
+  const [formdata, setformdata] = useState();
   const [error, seterror] = useState(null);
 
   useEffect(() => {
@@ -34,12 +35,31 @@ const Signup = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const sendData = async () => {
+      
+      if (formdata) {
+        try {
+          const res = await axios_setup.post("/signup", formdata);
+          console.log("Data sent:", res.formdata);
+        } catch (error) {
+          seterror(error);
+        }
+      }
+    };
+
+    sendData();
+    
+  }, [data]);
+  const onsubmit = (formdata) => {
+    setformdata(formdata);
+  };
   if (error) {
     return <div className="text-xl pl-20 ">Error: {error.message}</div>;
   }
 
   return (
-    <div className="flex flex-col items-center w-full h-screen justify-center bg-inherit p-4">
+    <div className="flex flex-col items-center w-full h-full justify-center bg-inherit p-4">
       <div className="w-full max-w-xs md:max-w-sm lg:max-w-md border border-slate-300 shadow-md p-6 bg-white">
         <div>
           <div className="text-center mb-4">
@@ -60,30 +80,35 @@ const Signup = () => {
 
           <form
             action="/signup"
-            onSubmit={handleSubmit((data) => console.log(data))}
+            onSubmit={handleSubmit(onsubmit)}
             className="space-y-4"
+            method="post"
           >
             <input
               {...register("email")}
               type="email"
+              name="email"
               placeholder="Mobile number or email"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
               {...register("name")}
               type="text"
+              name="name"
               placeholder="Full Name"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
               {...register("username")}
               type="text"
+              name="username"
               placeholder="Username"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
               {...register("password")}
               type="password"
+              name="password"
               placeholder="Password"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
