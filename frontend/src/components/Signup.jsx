@@ -6,12 +6,6 @@ import axios_setup from "@/assets/Axios";
 
 const Signup = () => {
   const [display_name, setdisplay_name] = useState();
-  const { register, handleSubmit } = useForm();
-
-  const [data, setdata] = useState(null);
-  const [formdata, setformdata] = useState();
-  const [error, seterror] = useState(null);
-
   useEffect(() => {
     if (Project_name) {
       setdisplay_name(Project_name);
@@ -20,40 +14,23 @@ const Signup = () => {
     }
   }, [Project_name]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios_setup.get("/signup");
-        setdata(res.data);
-        console.log("Data fetched:", res.data);
-      } catch (error) {
-        seterror(error);
-        console.error("Error fetching data:", error);
-      }
-    };
+const [error, seterror] = useState(null);
 
-    fetchData();
-  }, []);
+const {register, handleSubmit} = useForm();
 
-  useEffect(() => {
-    const sendData = async () => {
-      
-      if (formdata) {
-        try {
-          const res = await axios_setup.post("/signup", formdata);
-          console.log("Data sent:", res.formdata);
-        } catch (error) {
-          seterror(error);
-        }
-      }
-    };
 
-    sendData();
+const handleRegistration = async (data) =>{
+  try {
+    const res = await axios_setup.post("/signup", data);
+  console.log(res.data);
+  
+  } catch (err) {
+    seterror(err.message);
     
-  }, [data]);
-  const onsubmit = (formdata) => {
-    setformdata(formdata);
-  };
+  }
+}
+ 
+
   if (error) {
     return <div className="text-xl pl-20 ">Error: {error.message}</div>;
   }
@@ -78,37 +55,35 @@ const Signup = () => {
             </div>
           </div>
 
-          <form
-            action="/signup"
-            onSubmit={handleSubmit(onsubmit)}
-            className="space-y-4"
-            method="post"
-          >
+          <form action="/signup" className="space-y-4" method="post" onSubmit={handleSubmit(handleRegistration)}>
             <input
-              {...register("email")}
               type="email"
+              {...register('email', {required: true})}
               name="email"
+              required
               placeholder="Mobile number or email"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
-              {...register("name")}
               type="text"
               name="name"
+              required
+              {...register('name', {required: true})}
               placeholder="Full Name"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
-              {...register("username")}
               type="text"
               name="username"
+              required
+              {...register('username', {required: true})}
               placeholder="Username"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
-              {...register("password")}
               type="password"
               name="password"
+              {...register('password', {required: true})}
               placeholder="Password"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
@@ -136,25 +111,7 @@ const Signup = () => {
         </p>
       </div>
 
-      <div className="text-center mt-4 text-gray-500 text-sm">
-        <p>Get the app.</p>
-        <div className="flex justify-center space-x-2 mt-2">
-          <Link to="#">
-            <img
-              src="https://www.instagram.com/static/images/appstore-badge.png/3e87cde9545a.png"
-              alt="App Store"
-              className="h-10"
-            />
-          </Link>
-          <Link to="#">
-            <img
-              src="https://www.instagram.com/static/images/playstore-badge.png/aa56e6d5c6f5.png"
-              alt="Play Store"
-              className="h-10"
-            />
-          </Link>
-        </div>
-      </div>
+      
     </div>
   );
 };
