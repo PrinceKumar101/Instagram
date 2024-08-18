@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Profile_Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { AddOutlined } from "@mui/icons-material";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import axios_setup from "@/assets/Axios";
 
 const Profile = () => {
   const insideProfileLink = [
@@ -19,6 +20,28 @@ const Profile = () => {
       text: "Tagged",
     },
   ];
+
+  const [data, setdata] = useState();
+  const [error, seterror] = useState("");
+
+  useEffect(() => {
+    seterror("");
+    const fetchData = async () => {
+      try {
+        const res = await axios_setup.get("/profile");
+        setdata(res.data);
+      } catch (error) {
+        console.error("Error fetching data:", seterror(error));
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (error.length > 0) {
+    return <div>{error}</div>;
+  }
+
   return (
     <>
       <div className="main flex flex-col gap-5">
@@ -59,20 +82,16 @@ const Profile = () => {
 
         <div className="third_section flex flex-col justify-around items-center w-full md:px-36">
           <div className="flex justify-around items-center gap-10 border-b border-slate-300 w-full md:px-52 ">
-            {insideProfileLink.map((items, index) => {
-              return (
-                <>
-                  <Link
-                    key={index}
-                    to={items.to}
-                    className="md:text-2xl text-xl font-thin tracking-wide hover:bg-slate-200 rounded-lg px-2 py-1 "
-                    variant="ghost"
-                  >
-                    {items.text}
-                  </Link>
-                </>
-              );
-            })}
+            {insideProfileLink.map((items, index) => (
+              <Link
+                key={index}
+                to={items.to}
+                className="md:text-2xl text-xl font-thin tracking-wide hover:bg-slate-200 rounded-lg px-2 py-1"
+                variant="ghost"
+              >
+                {items.text}
+              </Link>
+            ))}
           </div>
           <div className="flex justify-start flex-wrap w-1/2 gap-5 p-5">
             <Outlet />
