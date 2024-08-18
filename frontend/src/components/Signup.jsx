@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Project_name } from "../assets/Project_variable";
 import { useForm } from "react-hook-form";
 import axios_setup from "@/assets/Axios";
-
+import Profile from "./Profile";
 const Signup = () => {
   const [display_name, setdisplay_name] = useState();
   useEffect(() => {
@@ -14,22 +14,23 @@ const Signup = () => {
     }
   }, [Project_name]);
 
-const [error, seterror] = useState(null);
+  const [error, seterror] = useState(null);
 
-const {register, handleSubmit} = useForm();
+  const { register, handleSubmit } = useForm();
 
+  const navigate = useNavigate();
 
-const handleRegistration = async (data) =>{
-  try {
-    const res = await axios_setup.post("/signup", data);
-  console.log(res.data);
-  
-  } catch (err) {
-    seterror(err.message);
-    
-  }
-}
- 
+  const handleRegistration = async (data) => {
+    try {
+      const res = await axios_setup.post("/signup", data);
+
+      if (res.data.success) {
+        navigate("/profile", { state: { message: "signup sucessfull" } });
+      }
+    } catch (err) {
+      seterror(err);
+    }
+  };
 
   if (error) {
     return <div className="text-xl pl-20 ">Error: {error.message}</div>;
@@ -55,10 +56,15 @@ const handleRegistration = async (data) =>{
             </div>
           </div>
 
-          <form action="/signup" className="space-y-4" method="post" onSubmit={handleSubmit(handleRegistration)}>
+          <form
+            action="/signup"
+            className="space-y-4"
+            method="post"
+            onSubmit={handleSubmit(handleRegistration)}
+          >
             <input
               type="email"
-              {...register('email', {required: true})}
+              {...register("email", { required: true })}
               name="email"
               required
               placeholder="Mobile number or email"
@@ -68,7 +74,7 @@ const handleRegistration = async (data) =>{
               type="text"
               name="name"
               required
-              {...register('name', {required: true})}
+              {...register("name", { required: true })}
               placeholder="Full Name"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
@@ -76,14 +82,14 @@ const handleRegistration = async (data) =>{
               type="text"
               name="username"
               required
-              {...register('username', {required: true})}
+              {...register("username", { required: true })}
               placeholder="Username"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
               type="password"
               name="password"
-              {...register('password', {required: true})}
+              {...register("password", { required: true })}
               placeholder="Password"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
@@ -110,8 +116,6 @@ const handleRegistration = async (data) =>{
           </Link>
         </p>
       </div>
-
-      
     </div>
   );
 };
