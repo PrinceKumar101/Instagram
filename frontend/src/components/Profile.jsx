@@ -23,6 +23,7 @@ const Profile = () => {
 
   const [data, setdata] = useState();
   const [error, seterror] = useState("");
+  const [found_user, setfound_user] = useState("");
 
   useEffect(() => {
     seterror("");
@@ -30,6 +31,9 @@ const Profile = () => {
       try {
         const res = await axios_setup.get("/profile");
         setdata(res.data);
+        setfound_user(res.data.found_user);
+        console.log(found_user);
+        
       } catch (error) {
         console.error("Error fetching data:", seterror(error));
       }
