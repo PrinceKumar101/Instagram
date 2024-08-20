@@ -7,6 +7,7 @@ const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const session = require("express-session");
 const flash = require("connect-flash");
+const cookie = require("cookie");
 
 app.use(bodyParser.json());
 app.use(fileUpload());
@@ -14,10 +15,12 @@ app.use(express.static("uploads"));
 app.use(cors());
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET, POST, PUT, DELETE"],
+    origin: "*", // Replace with your frontend's domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // List HTTP methods
+     // Allow cookies and credentials
   })
 );
+
 
 // Routes
 const userRoute = require("./routes/user");
