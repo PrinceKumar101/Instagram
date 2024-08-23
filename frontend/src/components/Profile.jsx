@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Profile_Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { AddOutlined } from "@mui/icons-material";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import axios_setup from "@/assets/Axios";
 
 const Profile = () => {
@@ -14,6 +14,8 @@ const Profile = () => {
 
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [redirect, setRedirect] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,14 +25,22 @@ const Profile = () => {
           setData(res.data.user || null); // Handle no user data
         } else {
           setError(res.data.message || "Unknown error occurred");
+          setRedirect(true); // Trigger redirect
         }
       } catch (error) {
         setError(error.response?.data?.message || "Failed to fetch data");
+        setRedirect(true); // Trigger redirect if there's an error
       }
     };
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (redirect) {
+      navigate("/", { replace: true }); // Redirect to home page
+    }
+  }, [redirect, navigate]);
 
   if (error) {
     return <div>{error}</div>;
