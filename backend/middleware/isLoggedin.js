@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const userModel = require('./models/userModel'); // Adjust path as necessary
+const userModel = require("../models/user"); // Adjust path as necessary
 
 const isLoggedIn = async (req, res, next) => {
   const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
