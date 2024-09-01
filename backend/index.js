@@ -7,7 +7,6 @@ const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const session = require("express-session");
 const flash = require("connect-flash");
-const cookie = require("cookie");
 const cookieParser = require('cookie-parser');
 
 
@@ -15,7 +14,6 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 app.use(express.static("uploads"));
 app.use(cookieParser());
-app.use(cors());
 app.use(
   cors({
     origin: "http://localhost:5173", // Replace with your frontend's domain
