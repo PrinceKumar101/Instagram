@@ -1,5 +1,5 @@
 const express = require("express");
-const { register } = require("../controllers/user.controller");
+const { register, login } = require("../controllers/user.controller");
 const isLoggedIn = require("../middleware/isLoggedin");
 const router = express.Router();
 const userModel = require("../models/user");
@@ -32,5 +32,5 @@ router.get("/profile", isLoggedIn, async function (req, res, next) {
   }
 });
 
-
+router.post("/login",login)
 module.exports = router;

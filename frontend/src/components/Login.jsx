@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate import
 import { Project_name } from "../assets/Project_variable";
+import axios_setup from "@/assets/Axios";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const [display_name, setdisplay_name] = useState();
-  
+  const [responseMessage, setresponseMessage] = useState();
+  const [error, seterror] = useState();
+  const { handleSubmit, register } = useForm();
+  const navigate = useNavigate(); // Initialize useNavigate
+
   useEffect(() => {
     if (Project_name) {
       setdisplay_name(Project_name);
@@ -12,11 +18,35 @@ const Login = () => {
       setdisplay_name("Default Project Name");
     }
   }, [Project_name]);
+
+  const handellogin = async (data) => {
+    try {
+      const res = await axios_setup.post("/login", data);
+      setresponseMessage(res.data.message);
+      if (res.data.success) {
+        navigate("/profile", { state: { message: "Signup successful" } });
+      }
+    } catch (err) {
+      console.error("Error during login:", err); // Log full error object for debugging
+      if (err.response) {
+        seterror(err.response.data.message || "An unexpected error occurred.");
+      } else {
+        seterror("Network error or server not reachable.");
+      }
+    }
+  };
+
   
   return (
     <div className="flex flex-col items-center w-full h-screen justify-center p-4 bg-inherit">
       <div className="w-full max-w-xs md:max-w-sm lg:max-w-md border  shadow-xl p-6 bg-inhert">
-        <form action="#">
+      {error && <div className="text-xl pl-20 text-red-500">{error}</div>}
+            {responseMessage && !error && (
+              <div className="text-xl pl-20 text-green-500">
+                {responseMessage}
+              </div>
+            )}
+        <form onSubmit={handleSubmit(handellogin)}>
           <div className="text-center mb-4">
             <h1 className="text-3xl font-bold">{display_name}</h1>
             <p className="text-gray-600 mt-2">
@@ -35,12 +65,15 @@ const Login = () => {
 
           <div className="space-y-4">
             <input
+
               type="email"
+              {...register("email", { required: "Email is required" })}
               placeholder="Mobile number or email"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <input
               type="password"
+              {...register("password", { required: "Password is required" })}
               placeholder="Password"
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
@@ -61,7 +94,7 @@ const Login = () => {
       <div className="w-full max-w-xs md:max-w-sm lg:max-w-md border border-slate-300 shadow-md p-4 mt-4 bg-white text-center">
         <p>
           Don't have an account?{" "}
-          <Link to="/Signup" className="text-blue-500 font-bold">
+          <Link to="/sign_up" className="text-blue-500 font-bold">
             Sign In
           </Link>
         </p>

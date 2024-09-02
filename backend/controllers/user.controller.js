@@ -63,59 +63,80 @@ const register = async function (req, res, next) {
 const login = async function (req, res, next) {
   try {
     const { email, password } = req.body;
+    console.log("Received login request", { email, password: !!password });
+
     if (!email || !password) {
+      console.log("Missing email or password");
       return res.status(400).json({
         message: "Email or password is missing",
         success: false,
       });
     }
-    const found_user = await User.findOne({ email: email });
-    if (!found_user) {
+
+    // Find user by email
+    console.log("Searching for user with email:", email);
+    const foundUser = await userModel.findOne({ email: email });
+    
+    if (!foundUser) {
+      console.log("User not found with email:", email);
       return res.status(401).json({
         message: "User not found",
         success: false,
       });
     }
-    const compare_password = await bcrypt.compare(
-      password,
-      found_user.password
-    );
-    if (!compare_password) {
+
+    // Check if password matches
+    console.log("User found:", foundUser);
+    const isPasswordCorrect = await bcrypt.compare(password, foundUser.password);
+    console.log("Password comparison result:", isPasswordCorrect);
+    
+    if (!isPasswordCorrect) {
+      console.log("Incorrect password for user:", email);
       return res.status(401).json({
         message: "Incorrect email or password",
         success: false,
       });
     }
+
+    // Generate JWT token
     const token = jwt.sign(
       {
-        userId: found_user._id,
-        email: found_user.email,
+        userId: foundUser._id,
+        email: foundUser.email,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
-    const user_without_password = await User.findById(found_user._id).select(
-      "-password"
-    );
+    console.log("JWT token generated:", token);
+
+    // Get user data without password
+    const userWithoutPassword = await userModel.findById(foundUser._id).select("-password");
+    console.log("User data retrieved without password:", userWithoutPassword);
+
+    // Set cookie and send response
+    console.log("Setting cookie and sending response");
     return res
       .cookie("token", token, {
         httpOnly: true,
         sameSite: "strict",
-        maxAge: 1 * 24 * 60 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
       })
       .json({
-        message: `Welcome back, ${found_user.username}`,
+        message: `Welcome back, ${foundUser.username}`,
         success: true,
-        user: user_without_password,
+        user: userWithoutPassword,
       });
+
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({
+    console.error("Error occurred during login:", err.message);
+    return res.status(500).json({
       message: "Server error",
       success: false,
     });
   }
 };
+
+
 
 const logout = async function (req, res, next) {
   try {
