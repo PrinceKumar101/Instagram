@@ -25,7 +25,10 @@ router.get("/profile", isLoggedIn, async function (req, res, next) {
     if (!foundUser) {
       return res.status(404).json({ error: "User not found" });
     }
-    res.json({ user: foundUser });
+    res.json({
+      user:foundUser,
+      sucess:true,
+    });
   } catch (error) {
     console.error('Error fetching profile:', error);  // Log the full error
     res.status(500).json({ error: "Server error" });
