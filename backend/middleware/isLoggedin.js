@@ -12,11 +12,13 @@ const isLoggedIn = async (req, res, next) => {
   }
 
   try {
+    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Attach decoded data to request object
     req.user = decoded;
 
-    // Check if user data exists in the database (optional)
-    // If no user data is found, allow request to proceed if token is valid
+    // Fetch user data from database
     const user = await userModel.findOne({ email: decoded.email });
 
     if (!user) {
@@ -27,9 +29,10 @@ const isLoggedIn = async (req, res, next) => {
       });
     }
 
-    req.userData = user; // Optionally attach user data to the request
+    req.userData = user; // Attach user data to request object
     next();
   } catch (err) {
+    console.error('Token verification failed:', err); // Log error for debugging
     return res.status(403).json({
       message: "Invalid token.",
       success: false,
