@@ -21,13 +21,16 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         const res = await axios_setup.get("/profile");
-        if (res.data.success) {
+        console.log("Profile fetch response:", res); // Debugging response
+
+        if (res.data.sucess) {
           setData(res.data.user || null); // Handle no user data
         } else {
           setError(res.data.message || "Unknown error occurred");
           setRedirect(true); // Trigger redirect
         }
       } catch (error) {
+        console.error("Error fetching profile data:", error); // Log error
         setError(error.response?.data?.message || "Failed to fetch data");
         setRedirect(true); // Trigger redirect if there's an error
       }
@@ -38,6 +41,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (redirect) {
+      console.log("Redirecting to home page"); // Debugging redirect
       navigate("/", { replace: true }); // Redirect to home page
     }
   }, [redirect, navigate]);
