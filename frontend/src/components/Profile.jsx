@@ -60,8 +60,8 @@ const Profile = () => {
               <AvatarFallback>CN</AvatarFallback>
             </Profile_Avatar>
           </div>
-          <div className="md:text-2xl text-xl flex items-center justify-center flex-wrap gap-3">
-            <h2>{data ? data.username : "Loading..."}</h2>
+          <div className="md:text-2xl text-xl flex items-center justify-center flex-wrap gap-4">
+            <h2 className=" font-bold">{data ? data.username : "Loading..."}</h2>
             <Button className="text-xs md:text-sm" variant="Profile_button">
               Edit Profile
             </Button>
@@ -70,8 +70,8 @@ const Profile = () => {
             </Button>
 
             <div className="flex w-full justify-center items-center gap-10 text-lg tracking-wide">
-              <h1>{data ? `${data.followersCount} Followers` : "Loading..."}</h1>
-              <h1>{data ? `${data.followingCount} Following` : "Loading..."}</h1>
+              <h1>{data ? `${data.followers.length} Followers` : "Loading..."}</h1>
+              <h1>{data ? `${data.following.length} Following` : "Loading..."}</h1>
             </div>
           </div>
 
